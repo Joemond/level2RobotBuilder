@@ -1,0 +1,318 @@
+ <!DOCTYPE HTML>
+ <html>
+	<head>
+		<title>Robot Builder</title>
+		<style>
+		body /* background */
+		{
+			background-color: #222831; /* background color */
+			padding-left:20px;
+			padding-right:20px;
+		}
+		h1 /* headers */
+		{
+			font-family:monospace;
+			font-size:32pt;
+			text-align:center;
+			text-decoration:underline;
+			color: #719192;			
+		}
+		h5 /* chassis contents & finalize button */
+		{
+			height:125px;
+			text-align:center;
+			cursor:pointer;
+		}
+		h6 /* selected robot display */
+		{
+			height:750px;
+			text-align: center;
+		}
+		p /* control panel */
+		{
+			font-family:monospace;
+			font-size:16pt;
+			padding:20px;
+			color: #00adb5; /* control panel text color */
+			background-color: #393e46; /* control panel color */
+		}
+		span /* configured features output */
+		{
+			color: #dfcdc3;
+		}
+		img /* robot thumbnails & selected robot display */
+		{
+			padding-left:10pt;
+			padding-right:10pt;
+			height:100%;
+			text-align:center;
+		}
+		button /* all buttons */
+		{
+			cursor:pointer;
+		}
+
+		</style>
+		<script>
+			function initialize()
+			{
+				// ----- Initializes default powerSource value and assigns HTML element to a JS variable
+				powerSource = "No Power Installed";
+				powerSourceOutput = document.getElementById("pwrSrc");
+		
+				// ----- Initializes numeric features to 0 and assigns their HTML elements to JS variables
+				power = 0;
+				powerOutput = document.getElementById("pwr");
+				speed = 0;
+				speedOutput = document.getElementById("spd");
+				structuralIntegrity = 0;
+				structuralIntegrityOutput = document.getElementById("strInt");
+			
+				// ----- Initializes toggle features to false and assigns their HTML elements to JS variables
+				scanners = false;
+				scannersOutput = document.getElementById("scnrs");
+				defensiveSystems = false;
+				defensiveSystemsOutput = document.getElementById("defSys");
+				
+				// ----- Assigns the selected robot HTML element to a JS variable
+				robotOutput = document.getElementById("robotView");
+				
+				// ----- Assigns the "block" HTML elements to JS variables so they can be set to nothing
+				blockOneOutput = document.getElementById("blockOne");
+				blockTwoOutput = document.getElementById("blockTwo");
+				blockThreeOutput = document.getElementById("blockThree");
+				blockFourOutput = document.getElementById("blockFour");
+				blockFiveOutput = document.getElementById("blockFive");
+				blockSixOutput = document.getElementById("blockSix");
+				blockSevenOutput = document.getElementById("blockSeven");
+				blockEightOutput = document.getElementById("blockEight");
+				blockNineOutput = document.getElementById("blockNine");
+				blockTenOutput = document.getElementById("blockTen");
+
+				/*displays the initial values. A "display()" function is NOT used because it increases runtime dramatically. 
+				For example, if it is called to change power, it will still change speed, structural integrity, etc. (Even if it is from 0 to 0)*/
+				powerSourceOutput.innerHTML = powerSource;
+				powerOutput.innerHTML = power;
+				speedOutput.innerHTML = speed;
+				structuralIntegrityOutput.innerHTML = structuralIntegrity;
+				scannersOutput.innerHTML = "OFF";
+				defensiveSystemsOutput.innerHTML = "OFF";
+			}
+			function changePwrSrc(source)
+			{
+				powerSource = source 
+				
+				// ------ sets the POWER to the maximum if it is higher (Solar has a maximum of 10, nuclear only has a maximum of 4, etc.) ------ 
+				if (power >10 && powerSource == "Solar"){
+					power = 10;
+					powerOutput.innerHTML = power;
+				}
+				if (power >8 && powerSource == "Hydro"){
+					power = 8;
+					powerOutput.innerHTML = power;
+				}
+				if (power >12 && powerSource == "Nuclear"){
+					power = 12;
+					powerOutput.innerHTML = power;
+				}
+				// ------  sets the SPEED to the maximum if it is higher ------  
+				if (speed >10 && powerSource == "Solar"){
+					speed = 10;
+					speedOutput.innerHTML = speed;
+				}
+				if (speed >12 && powerSource == "Hydro"){
+					speed = 12;
+					speedOutput.innerHTML = speed;
+				}
+				if (speed >14 && powerSource == "Nuclear"){
+					speed = 14;
+					speedOutput.innerHTML = speed;
+				}
+				// ------  sets the STRUCTURAL INTEGRITY to the maximum if it is higher ------  
+				if (structuralIntegrity >10 && powerSource == "Solar"){
+					structuralIntegrity = 10;
+					structuralIntegrityOutput.innerHTML = structuralIntegrity;
+				}
+				if (structuralIntegrity >10 && powerSource == "Hydro"){
+					structuralIntegrity = 10;
+					structuralIntegrityOutput.innerHTML = structuralIntegrity;
+				}
+				if (structuralIntegrity >4 && powerSource == "Nuclear"){
+					structuralIntegrity = 4;
+					structuralIntegrityOutput.innerHTML = structuralIntegrity;
+				}
+				
+				powerSourceOutput.innerHTML = powerSource; // displays selected power source
+			}
+			function changePower(value)
+			{
+				if (powerSource !== "No Power Installed") {
+					power += value;
+					if (power < 0) // prevents power from going into negatives
+						power = 0;
+				
+					if (power >10 && powerSource == "Solar") //prevents power from going over the maximum (determined by power source)
+						power = 10;
+					if (power >8 && powerSource == "Hydro")
+						power = 8;
+					if (power >12 && powerSource == "Nuclear")
+						power = 12;
+					
+					powerOutput.innerHTML = power; // displays power value
+				} else {
+					noPowerAlert();
+				}
+				
+			}
+			function changeSpeed(value)
+			{
+				if (powerSource !== "No Power Installed") {
+					speed += value;
+					if (speed < 0) 
+						speed = 0;
+				
+					if (speed >10 && powerSource == "Solar")
+						speed = 10;
+					if (speed >12 && powerSource == "Hydro")
+						speed = 12;
+					if (speed >14 && powerSource == "Nuclear")
+						speed = 14;
+					
+					speedOutput.innerHTML = speed; // displays speed value
+				} else {
+					noPowerAlert();
+				}
+				
+			}
+			function changeStructuralIntegrity(value)
+			{
+				if (powerSource !== "No Power Installed") {
+					structuralIntegrity += value;
+					if (structuralIntegrity < 0) 
+						structuralIntegrity = 0;
+				
+					if (structuralIntegrity >10 && powerSource == "Solar")
+						structuralIntegrity = 10;
+					if (structuralIntegrity >10 && powerSource == "Hydro")
+						structuralIntegrity = 10;
+					if (structuralIntegrity >4 && powerSource == "Nuclear")
+						structuralIntegrity = 4;
+					
+					structuralIntegrityOutput.innerHTML = structuralIntegrity; // displays structural integrity value
+				} else {
+					noPowerAlert();
+				}
+				
+			}
+			
+			function toggleScanners()
+			{
+				if (powerSource !== "No Power Installed") {
+					scanners = !scanners; // toggles 'scanners' variable 
+					if (scanners == true){
+						scannersOutput.innerHTML = "ON"; // displays scanners as ON if it is 'true'
+					} else {
+						scannersOutput.innerHTML = "OFF"; // displays scanners as OFF if it is 'false'
+					}
+				} else { 
+					noPowerAlert();
+				}
+			}
+			
+			function toggleDefensiveSystems()
+			{
+				if (powerSource !== "No Power Installed") {
+					defensiveSystems = !defensiveSystems; //toggles 'defensiveSystems' variable
+					if (defensiveSystems == true){
+						defensiveSystemsOutput.innerHTML = "ON"; // displays defensive systems as ON if it is 'true'
+					} else {
+						defensiveSystemsOutput.innerHTML = "OFF"; // displays defensive systems as OFF if it is 'false'
+					}
+				} else { 
+					noPowerAlert();
+				}
+			}
+			
+			function noPowerAlert()
+			{
+				alert("Select a power source!");
+			}
+			
+			function selectRobot(robotImg)
+			{
+				robotOutput.src = "images/" + robotImg + ".png";
+			}
+			
+			function finalizeRobot() // Elements are grouped into larger elements with the <span> tag, each assigned an id (blockOne to blockTen). These are set to a value of nothing to "remove" them.
+			{
+				blockOneOutput.innerHTML = "";
+				blockTwoOutput.innerHTML = "";
+				blockThreeOutput.innerHTML = "";
+				blockFourOutput.innerHTML = "";
+				blockFiveOutput.innerHTML = "";
+				blockSixOutput.innerHTML = "";
+				blockSevenOutput.innerHTML = "";
+				blockEightOutput.innerHTML = "";
+				blockNineOutput.innerHTML = "";
+				blockTenOutput.innerHTML = "";
+			}
+			
+		</script>
+		</script>
+	</head>
+	
+	<body onload = "initialize();">
+		<h1>Robot Builder</h1> 
+		<p>
+			<span id = "blockTen">
+			Aliens are attacking the planet! Your city needs you! Design a robot to face the incoming threat!</br>
+			First, select a power source. Each one has different capabilities. For example, nuclear power is strong but also very unstable!</br>
+			Next, customize the features of your robot: power, speed, structural integrity, scanners, and defensive systems.</br>
+			Finally, select a robot frame from the chassis and click 'Finalize'!</br>
+			</br></span> 
+			
+			Power Source: <span id="pwrSrc"> </span> </br>
+			<span id= "blockOne">
+			<button onclick= "changePwrSrc('Solar');"> Solar </button> 
+			<button onclick= "changePwrSrc('Hydro');"> Hydro </button> 
+			<button onclick= "changePwrSrc('Nuclear');"> Nuclear </button> 
+			</br>
+			</span>
+			</br>
+			
+			Power: <span id="pwr"> </span> <span id= "blockTwo"> </br>  
+			<button onclick= "changePower(-1);">-</button> <button onclick= "changePower(1);">+</button> </span></br>
+		
+			Speed: <span id="spd"> </span> <span id= "blockThree"> </br>  
+			<button onclick= "changeSpeed(-1);">-</button> <button onclick= "changeSpeed(1);">+</button> </span></br>
+			
+			Structural Integrity: <span id="strInt"> </span> <span id= "blockFour"> </br> 
+			<button onclick= "changeStructuralIntegrity(-1);">-</button> <button onclick= "changeStructuralIntegrity(1);">+</button> </span></br></br>
+			
+			Scanners: <span id= "scnrs"> </span> <span id= "blockFive"></br> 
+			<button onclick= "toggleScanners();">Toggle</button></span></br>
+			
+			Defensive Systems: <span id= "defSys"> </span> <span id= "blockSix"> </br> 
+			<button onclick= "toggleDefensiveSystems();">Toggle</button></span>
+		</p>
+		
+		
+		<div id= "blockSeven"> <h1>Chassis</h1></div>
+		<div id="blockEight"><h5>
+			<img onclick= "selectRobot('americanRobot');" src= "images/americanRobot.png">
+			<img onclick= "selectRobot('biohazardRobot');" src= "images/biohazardRobot.png"> 
+			<img onclick= "selectRobot('fireRobot');" src= "images/fireRobot.png">
+			<img onclick= "selectRobot('gilRobot');" src= "images/gilRobot.png"> 
+			<img onclick= "selectRobot('waterRobot');" src= "images/waterRobot.png"> 
+		</h5> <hr> </div> 
+		
+		<h6>
+			<img id= "robotView" src= "images/default.png">
+		</h6>
+		
+		<div id= "blockNine"> <h5>
+			<button onclick= "finalizeRobot();"><h2>Finalize</h2></button>
+		</h5> </div>
+		
+	</body>
+</html>
